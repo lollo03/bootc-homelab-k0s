@@ -56,16 +56,14 @@ jobs:
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
-          registry: ${{ env.GITHUB_REGISTRY }}
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Push image with tags
         run: |
-          # Define registry path
-          REGISTRY_IMAGE="${GITHUB_REGISTRY}/${GITHUB_REPOSITORY}"
+          REGISTRY_IMAGE="ghcr.io/${{ github.repository_owner }}/${IMAGE_TAG}"
           
-          # Push with various tags
           buildah push $IMAGE_TAG "${REGISTRY_IMAGE}:latest"
           buildah push $IMAGE_TAG "${REGISTRY_IMAGE}:${K8S_VERSION}"
           buildah push $IMAGE_TAG "${REGISTRY_IMAGE}:${K8S_VERSION_MINOR}"
