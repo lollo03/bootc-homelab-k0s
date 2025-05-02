@@ -37,7 +37,7 @@ RUN dnf install -y nfs-utils-$NFS_UTILS_VERSION && \
 		dnf clean all
 
 # Install other tools
-RUN dnf install -y fish htop jq plocate rsync screen tcpdump tmux tree vim yq && \
+RUN dnf install -y fish htop jq plocate rsync screen tcpdump tmux tree vim yq netcat wireguard-tools && \
 		dnf clean all
 
 # Install INDISPENSABLE tools, that NEED to be on every server
