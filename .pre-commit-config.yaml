@@ -1,0 +1,13 @@
+repos:
+  - repo: https://github.com/hadolint/hadolint
+    rev: v2.12.0
+    hooks:
+      - id: hadolint-docker
+  - repo: local
+    hooks:
+      - id: k0s-version-check
+        name: Check for matching version of k0s Containerfile and kickstart
+        language: system
+        entry: bash -c "[ $(sed -ne 's|ARG K0S_VERSION\=\(.*\)|\1|p' Containerfile | tr + -) == $(sed -ne 's|ostreecontainer --url .*:\(.*\)|\1|p' kickstart.ks) ] || exit 1"
+        pass_filenames: false
+        files: "^Containerfile|kickstart.ks$"
