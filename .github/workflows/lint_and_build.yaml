@@ -21,3 +21,56 @@ jobs:
         with: 
           files: Containerfile
 
+  build:
+    runs-on: ubuntu-latest
+    needs: lint-dockerfile
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up environment variables
+        run: |
+          K0S_VERSION=$(sed -ne 's|ARG K0S_VERSION\=\(.*\)|\1|p' Containerfile | tr + -)
+          K8S_VERSION=$(echo $K0S_VERSION | cut -d "-" -f 1)
+          K8S_VERSION_MINOR=$(echo $K8S_VERSION | cut -d "." -f 1-2)
+          
+          echo "K0S_VERSION=$K0S_VERSION" >> $GITHUB_ENV
+          echo "K8S_VERSION=$K8S_VERSION" >> $GITHUB_ENV
+          echo "K8S_VERSION_MINOR=$K8S_VERSION_MINOR" >> $GITHUB_ENV
+          echo "IMAGE_TAG=k0s-bootc" >> $GITHUB_ENV
+      
+      - name: Set up Buildah
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: ${{ env.IMAGE_TAG }}
+          containerfiles: |
+            Containerfile
+          build-args: |
+            SSH_AUTHORIZED_KEYS=${{ secrets.SSH_AUTHORIZED_KEYS }}
+          extra-args: |
+            --no-hosts
+            --no-hostname
+            --format=docker
+            --isolation=chroot
+      
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.GITHUB_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Push image with tags
+        run: |
+          # Define registry path
+          REGISTRY_IMAGE="${GITHUB_REGISTRY}/${GITHUB_REPOSITORY}"
+          
+          # Push with various tags
+          buildah push $IMAGE_TAG "${REGISTRY_IMAGE}:latest"
+          buildah push $IMAGE_TAG "${REGISTRY_IMAGE}:${K8S_VERSION}"
+          buildah push $IMAGE_TAG "${REGISTRY_IMAGE}:${K8S_VERSION_MINOR}"
+          buildah push $IMAGE_TAG "${REGISTRY_IMAGE}:${K0S_VERSION}"
+          buildah push $IMAGE_TAG "${REGISTRY_IMAGE}:${K0S_VERSION}-${GITHUB_SHA::7}"
+        env:
+          GITHUB_REGISTRY: ghcr.io
+      
