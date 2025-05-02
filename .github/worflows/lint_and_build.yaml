@@ -1,0 +1,23 @@
+name: Build image
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main" ]
+
+  workflow_dispatch:
+
+jobs:
+
+  lint-dockerfile:
+    name: Lint Dockerfile
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Run hadolint
+        uses: essentialkaos/hadolint-action@v1
+        with: 
+          files: Containerfile
+
