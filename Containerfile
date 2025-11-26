@@ -1,9 +1,11 @@
-FROM quay.io/fedora/fedora-bootc:42
+FROM quay.io/fedora/fedora-bootc:43
 
-ARG K0S_VERSION=v1.32.4+k0s.0
-ARG NFS_UTILS_VERSION=2.8.2
-ARG TAILSCALE_VERSION=1.82.5
-ARG QEMU_GUEST_AGENT_VERSION=9.2.3
+ARG K0S_VERSION=v1.34.2+k0s.0
+ARG NFS_UTILS_VERSION=2.8.4
+ARG TAILSCALE_VERSION=1.90.9
+ARG WIREGUARD_TOOLS_VERSION=1.0.20250521
+ARG QEMU_GUEST_AGENT_VERSION=10.1.2
+ARG CRI_TOOLS_VERSION=1.34
 
 ARG HOSTNAME=k0first
 ARG SSH_AUTHORIZED_KEYS
@@ -32,16 +34,20 @@ RUN curl "https://pkgs.tailscale.com/stable/fedora/tailscale.repo" -o "/etc/yum.
     dnf clean all && \
     systemctl enable tailscaled
 
+# Install wireguard-tools
+RUN dnf install -y wireguard-tools-$WIREGUARD_TOOLS_VERSION && \
+		dnf clean all
+
 # Install nfs-utils
 RUN dnf install -y nfs-utils-$NFS_UTILS_VERSION && \
 		dnf clean all
 
-# Install other tools
-RUN dnf install -y fish htop jq plocate rsync screen tcpdump tmux tree vim yq netcat wireguard-tools kubectl && \
+# Install kubernetes tools
+RUN dnf install -y cri-tools$CRI_TOOLS_VERSION && \
 		dnf clean all
 
-# Install INDISPENSABLE tools, that NEED to be on every server
-RUN dnf install -y cowsay figlet lolcat && \
+# Install other tools
+RUN dnf install -y fish htop jq plocate rsync screen tcpdump tmux tree vim yq && \
 		dnf clean all
 
 # Install k9s
