@@ -10,6 +10,7 @@ spec:
     sans:
       - k0first
       - k0first.lolloandr.com
+      - 10.34.23.1
   storage:
     type: kine
     etcd:
