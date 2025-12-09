@@ -42,7 +42,11 @@ To access the machine after it boots, you must inject your public SSH key during
       * *Tip:* You can add multiple keys by pasting them one per line.
 5.  Click **Add secret**.
 
-### 3\. Build the Image
+### 3\. Review `k0s.yaml`
+
+Modify at least the `spec/api/sans` values
+
+### 4\. Build the Image
 
 The build process is automated via CI/CD.
 
