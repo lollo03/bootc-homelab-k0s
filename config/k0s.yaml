@@ -7,7 +7,9 @@ spec:
     #address:
     k0sApiPort: 9443
     port: 6443
-    sans: []
+    sans:
+      - k0first
+      - k0first.lolloandr.com
   storage:
     type: kine
     etcd:
