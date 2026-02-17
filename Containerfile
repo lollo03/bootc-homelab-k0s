@@ -47,7 +47,7 @@ RUN dnf install -y cri-tools$CRI_TOOLS_VERSION && \
 		dnf clean all
 
 # Install other tools
-RUN dnf install -y fish htop jq plocate rsync screen tcpdump tmux tree vim yq && \
+RUN dnf install -y fish htop jq plocate rsync screen tcpdump tmux tree vim yq git && \
 		dnf clean all
 
 # Install k9s
