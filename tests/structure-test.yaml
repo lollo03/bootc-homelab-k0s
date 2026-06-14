@@ -1,0 +1,74 @@
+schemaVersion: "2.0.0"
+
+commandTests:
+  - name: "k0s version"
+    command: "k0s"
+    args: ["version"]
+    expectedOutput: ['^v\d+\.\d+\.\d+']
+
+  - name: "k0s config validation"
+    command: "k0s"
+    args: ["validate", "config", "--config", "/etc/k0s/k0s.yaml"]
+    exitCode: 0
+
+  - name: "crictl"
+    command: "crictl"
+    args: ["--version"]
+    expectedOutput: ['crictl']
+
+  - name: "systemd"
+    command: "systemctl"
+    args: ["--version"]
+    expectedOutput: ['systemd']
+
+  - name: "KUBECONFIG env"
+    command: "sh"
+    args: ["-c", "grep ^KUBECONFIG /etc/environment | cut -d= -f2"]
+    expectedOutput: ['^/var/lib/k0s/pki/admin.conf']
+
+  - name: "EDITOR env"
+    command: "sh"
+    args: ["-c", "grep ^EDITOR /etc/environment | cut -d= -f2"]
+    expectedOutput: ['^vim']
+
+fileExistenceTests:
+  - name: "k0s config file"
+    path: "/etc/k0s/k0s.yaml"
+    shouldExist: true
+
+  - name: "k0s binary"
+    path: "/usr/local/bin/k0s"
+    shouldExist: true
+
+  - name: "firstboot systemd unit"
+    path: "/usr/local/lib/systemd/system/firstboot.service"
+    shouldExist: true
+
+  - name: "firstboot script"
+    path: "/usr/local/lib/bin/firstboot.sh"
+    shouldExist: true
+
+  - name: "hostname file"
+    path: "/etc/hostname"
+    shouldExist: true
+
+  - name: "SSH no password config"
+    path: "/etc/ssh/sshd_config.d/10-no-password-auth.conf"
+    shouldExist: true
+
+  - name: "CNI directory"
+    path: "/opt/cni"
+    shouldExist: true
+
+  - name: "local-path-provisioner directory"
+    path: "/opt/local-path-provisioner"
+    shouldExist: true
+
+  - name: "firstboot.d directory"
+    path: "/etc/firstboot.d"
+    shouldExist: true
+
+fileContentTests:
+  - name: "SSH no password content"
+    path: "/etc/ssh/sshd_config.d/10-no-password-auth.conf"
+    expectedContents: ['PasswordAuthentication no']
