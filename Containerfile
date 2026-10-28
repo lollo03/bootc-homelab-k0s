@@ -1,11 +1,7 @@
 FROM quay.io/fedora/fedora-bootc:44
 
 ARG K0S_VERSION=v1.36.4+k0s.1
-ARG NFS_UTILS_VERSION=2.8.7
 ARG TAILSCALE_VERSION=1.104.2
-ARG WIREGUARD_TOOLS_VERSION=1.0.20260223
-ARG QEMU_GUEST_AGENT_VERSION=10.2.2
-ARG CRI_TOOLS_VERSION=1.35
 
 ARG HOSTNAME=k0first
 ARG SSH_AUTHORIZED_KEYS
@@ -24,7 +20,7 @@ RUN set -eu; mkdir -p /usr/ssh && \
 RUN [ -z "$SSH_AUTHORIZED_KEYS" ] || echo "$SSH_AUTHORIZED_KEYS" > /usr/ssh/root.keys
 
 # Install qemu-guest-agent
-RUN dnf install -y qemu-guest-agent-$QEMU_GUEST_AGENT_VERSION && \
+RUN dnf install -y qemu-guest-agent && \
 		dnf clean all && \
 		systemctl enable qemu-guest-agent
 
@@ -34,20 +30,8 @@ RUN curl "https://pkgs.tailscale.com/stable/fedora/tailscale.repo" -o "/etc/yum.
     dnf clean all && \
     systemctl enable tailscaled
 
-# Install wireguard-tools
-RUN dnf install -y wireguard-tools-$WIREGUARD_TOOLS_VERSION && \
-		dnf clean all
-
-# Install nfs-utils
-RUN dnf install -y nfs-utils-$NFS_UTILS_VERSION && \
-		dnf clean all
-
-# Install kubernetes tools
-RUN dnf install -y cri-tools$CRI_TOOLS_VERSION && \
-		dnf clean all
-
 # Install other tools
-RUN dnf install -y fish htop jq plocate rsync screen tcpdump tmux tree vim yq git && \
+RUN dnf install -y fish htop jq plocate rsync screen tcpdump tmux tree vim yq git nfs-utils wireguard-tools cri-tools && \
 		dnf clean all
 
 # Install k9s
