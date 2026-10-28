@@ -1,0 +1,48 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":configMigration"
+  ],
+  "packageRules": [
+    {
+      "description": "Loose versioning for Fedora bootc base image",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["quay.io/fedora/fedora-bootc"],
+      "versioning": "loose"
+    },
+    {
+      "matchDepNames": ["k0sproject/k0s"],
+      "commitMessageTopic": "k0s"
+    },
+    {
+      "matchDepNames": ["tailscale/tailscale"],
+      "commitMessageTopic": "tailscale"
+    }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "k0s version from GitHub releases (supports +k0s.X build metadata)",
+      "managerFilePatterns": ["/(^|/)(Containerfile|Dockerfile)$/"],
+      "matchStrings": [
+        "ARG K0S_VERSION=(?<currentValue>v?[^\\s]+)"
+      ],
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "k0sproject/k0s",
+      "versioningTemplate": "regex:^v?(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)\\+k0s\\.(?<build>\\d+)$"
+    },
+    {
+      "customType": "regex",
+      "description": "Tailscale version from GitHub releases (strips upstream 'v' prefix)",
+      "managerFilePatterns": ["/(^|/)(Containerfile|Dockerfile)$/"],
+      "matchStrings": [
+        "ARG TAILSCALE_VERSION=(?<currentValue>[^\\s]+)"
+      ],
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "tailscale/tailscale",
+      "extractVersionTemplate": "^v(?<version>.*)$",
+      "versioningTemplate": "semver"
+    }
+  ]
+}
