@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Run hadolint
         uses: essentialkaos/hadolint-action@v1
         with:
@@ -29,7 +29,7 @@ jobs:
     needs: lint
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up environment variables
         run: |
@@ -43,7 +43,7 @@ jobs:
           echo "IMAGE_TAG=k0s-bootc" >> $GITHUB_ENV
 
       - name: Set up Buildah
-        uses: redhat-actions/buildah-build@v2
+        uses: redhat-actions/buildah-build@v3
         with:
           image: ${{ env.IMAGE_TAG }}
           containerfiles: |
@@ -74,7 +74,7 @@ jobs:
 
       - name: Login to GitHub Container Registry
         if: github.event_name != 'pull_request'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
