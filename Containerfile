@@ -1,4 +1,4 @@
-FROM quay.io/fedora/fedora-bootc:44
+FROM quay.io/fedora/fedora-bootc:46
 
 ARG K0S_VERSION=v1.36.4+k0s.1
 ARG TAILSCALE_VERSION=1.104.4
