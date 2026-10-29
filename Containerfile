@@ -1,6 +1,6 @@
 FROM quay.io/fedora/fedora-bootc:44
 
-ARG K0S_VERSION=v1.36.4+k0s.1
+ARG K0S_VERSION=v1.37.1+k0s.0
 ARG TAILSCALE_VERSION=1.104.4
 
 ARG HOSTNAME=k0first
