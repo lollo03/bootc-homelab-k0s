@@ -18,6 +18,10 @@
     {
       "matchDepNames": ["tailscale/tailscale"],
       "commitMessageTopic": "tailscale"
+    },
+    {
+      "matchDepNames": ["netbirdio/netbird"],
+      "commitMessageTopic": "netbird"
     }
   ],
   "customManagers": [
@@ -41,6 +45,18 @@
       ],
       "datasourceTemplate": "github-releases",
       "depNameTemplate": "tailscale/tailscale",
+      "extractVersionTemplate": "^v(?<version>.*)$",
+      "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "description": "Netbird version from GitHub releases",
+      "managerFilePatterns": ["/(^|/)(Containerfile|Dockerfile)$/"],
+      "matchStrings": [
+        "ARG NETBIRD_VERSION=(?<currentValue>[^\\s]+)"
+      ],
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "netbirdio/netbird",
       "extractVersionTemplate": "^v(?<version>.*)$",
       "versioningTemplate": "semver"
     }

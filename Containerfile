@@ -1,6 +1,7 @@
 FROM quay.io/fedora/fedora-bootc:44
 
 ARG K0S_VERSION=v1.36.4+k0s.1
+ARG NETBIRD_VERSION=0.82.0
 ARG TAILSCALE_VERSION=1.104.5
 
 ARG HOSTNAME=k0first
@@ -29,6 +30,15 @@ RUN curl "https://pkgs.tailscale.com/stable/fedora/tailscale.repo" -o "/etc/yum.
     dnf install -y tailscale-$TAILSCALE_VERSION && \
     dnf clean all && \
     systemctl enable tailscaled
+
+# Install netbird
+# SYSTEMD_OFFLINE=1 makes systemctl behave as if inside a chroot, so the rpm %post
+# (which runs `netbird service install` and `netbird service start`) succeeds during
+# the build instead of failing because no systemd is running as PID 1.
+COPY ./config/netbird.repo /etc/yum.repos.d/netbird.repo
+RUN SYSTEMD_OFFLINE=1 dnf install -y netbird-$NETBIRD_VERSION && \
+    dnf clean all && \
+    systemctl enable netbird
 
 # Install other tools
 RUN dnf install -y fish htop jq plocate rsync screen tcpdump tmux tree vim yq git nfs-utils wireguard-tools cri-tools && \

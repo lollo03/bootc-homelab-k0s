@@ -30,6 +30,11 @@ commandTests:
     command: "sh"
     args: ["-c", "grep ^EDITOR /etc/environment | cut -d= -f2"]
     expectedOutput: ['^vim']
+  
+  - name: "Netbird version"
+    command: "netbird"
+    args: ["version"]
+    exitCode: 0
 
 fileExistenceTests:
   - name: "k0s config file"
@@ -66,6 +71,10 @@ fileExistenceTests:
 
   - name: "firstboot.d directory"
     path: "/etc/firstboot.d"
+    shouldExist: true
+
+  - name: "Netbird repo exists"
+    path: "/etc/yum.repos.d/netbird.repo"
     shouldExist: true
 
 fileContentTests:
